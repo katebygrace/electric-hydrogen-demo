@@ -1,0 +1,23 @@
+Reflect on overall security for the grafana setup, and how to keep it secure. 
+
+For example, how should we securely connect to data sources? 
+Data sources should be behind a VPN, ideally in a private subnet.  
+Data sources should be encryted at rest (volumes encryted, as well as databases). 
+Connections to databases should be encrypted as well (encryption in transit) 
+
+
+How should we handle authentication and authorization? 
+I would hope to utilize the company's SSO or Active Directory so as not to reinvent the wheel. 
+As for authorization, access should be limited to those who need to be able to access those dashboards. Ideally there'd already be groups in place we could utilize. 
+
+What are some ways we might approach multi-tenancy if multiple organizations need to use this grafana setup, and what would be the pros and cons of each from a security and maintenance perspective? 
+Hopefully, depending on the use case, I would utilize Grafana's built in multitenancy function https://grafana.com/docs/loki/latest/operations/multi-tenancy/
+Optionally, if it was necessary to have different Grafana instances, one for each organization, I would convert most of the existing terraform into a module that could easily be re-used.  
+
+What else should we be thinking about to keep the grafana setup secure?
+I'd want to do a more thorough review of logging to make sure logs are occurring at every layer of the stack, ideally pipe that into a SIEM of some kind for further analysis. 
+I'd want to make sure to keep the database up-to-date
+I'd want to make sure the docker image stays up to date
+I'd want to make sure backups are on an adequate cadence - I believe RDS takes snapshots every 24 hours, I might want to increase that frequency. 
+I'd want to make sure Grafana and any other running applications stay up to date
+I might consider a development environment to test upgrades. 
