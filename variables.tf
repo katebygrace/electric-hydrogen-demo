@@ -1,10 +1,8 @@
-#variable "aws_access_key" {
-#  description = "The IAM public access key"
-#}
-
-#variable "aws_secret_key" {
-#  description = "IAM secret access key"
-#}
+variable "name_prefix" {
+  description = "Prefix for resource names"
+  type        = string
+  default     = "grafana"
+}
 
 variable "region" {
   default     = "us-east-2"
@@ -39,7 +37,6 @@ variable "app_image" {
 variable "app_port" {
   description = "Port exposed by the docker image to redirect traffic to"
   default     = 3000
-
 }
 
 variable "app_count" {
@@ -63,4 +60,22 @@ variable "fargate_memory" {
 
 variable "vpc_id" {
   default = "grafana"
+}
+
+variable "autoscaling_min" {
+  default = "3"
+}
+
+variable "autoscaling_max" {
+  default = "6"
+}
+
+variable "instance_class" {
+  description = "Size of db"
+  default     = "db.t3.micro" #scale up as needed
+}
+
+variable "vpn_ip" {
+  description = "IP range for VPN, replace with real range"
+  default     = ["1.2.3.4/32"]
 }

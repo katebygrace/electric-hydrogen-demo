@@ -1,24 +1,24 @@
 resource "aws_db_subnet_group" "grafana-db" {
-  name       = "grafana"
+  name       = var.name_prefix
   subnet_ids = aws_subnet.grafana-private[*].id
 }
 
 resource "aws_security_group" "grafana-db" {
-  name   = "grafana-db"
+  name   = "${var.name_prefix}-db"
   vpc_id = aws_vpc.grafana.id
 
   ingress {
     from_port   = 5432
     to_port     = 5432
     protocol    = "tcp"
-    cidr_blocks = ["108.49.158.98/32"] #only inbound from home ip
+    cidr_blocks = var.vpn_ip
   }
 
   egress {
     from_port   = 5432
     to_port     = 5432
     protocol    = "tcp"
-    cidr_blocks = ["108.49.158.98/32"] #only outbound from home ip
+    cidr_blocks = var.vpn_ip
   }
 
 }
@@ -26,7 +26,7 @@ resource "aws_security_group" "grafana-db" {
 # https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/Appendix.PostgreSQL.CommonDBATasks.html#Appendix.PostgreSQL.CommonDBATasks.Parameters
 
 resource "aws_db_parameter_group" "grafana-db" {
-  name   = "grafana-db"
+  name   = "${var.name_prefix}-db"
   family = "postgres16"
 
   parameter {
@@ -37,9 +37,9 @@ resource "aws_db_parameter_group" "grafana-db" {
 
 #would likely do a cluster in a production environment, not an instance
 resource "aws_db_instance" "grafana" {
-  identifier        = "grafana-db"
-  instance_class    = "db.t3.micro" #scale up as needed
-  allocated_storage = 5             #gigs
+  identifier        = "${var.name_prefix}-db"
+  instance_class    = var.instance_class
+  allocated_storage = 5 #gigs
   #versions https://docs.aws.amazon.com/AmazonRDS/latest/PostgreSQLReleaseNotes/postgresql-versions.html
   engine                          = "postgres"
   engine_version                  = "16.3" #latest stable

@@ -107,6 +107,8 @@ Terraform will perform the following actions:
 
       + target_failover (known after apply)
 
+      + target_group_health (known after apply)
+
       + target_health_state (known after apply)
     }
 
@@ -115,7 +117,7 @@ Terraform will perform the following actions:
       + alarm_arns         = (known after apply)
       + arn                = (known after apply)
       + id                 = (known after apply)
-      + name               = "grafana_scale_down"
+      + name               = "grafana-scale-down"
       + policy_type        = "StepScaling"
       + resource_id        = "service/grafana-cluster/grafana-service"
       + scalable_dimension = "ecs:service:DesiredCount"
@@ -139,7 +141,7 @@ Terraform will perform the following actions:
       + alarm_arns         = (known after apply)
       + arn                = (known after apply)
       + id                 = (known after apply)
-      + name               = "grafana_scale_up"
+      + name               = "grafana-scale-up"
       + policy_type        = "StepScaling"
       + resource_id        = "service/grafana-cluster/grafana-service"
       + scalable_dimension = "ecs:service:DesiredCount"
@@ -201,7 +203,7 @@ Terraform will perform the following actions:
   + resource "aws_cloudwatch_metric_alarm" "service_cpu_high" {
       + actions_enabled                       = true
       + alarm_actions                         = (known after apply)
-      + alarm_name                            = "grafana_cpu_utilization_high"
+      + alarm_name                            = "grafana-cpu-utilization-high"
       + arn                                   = (known after apply)
       + comparison_operator                   = "GreaterThanOrEqualToThreshold"
       + dimensions                            = {
@@ -227,7 +229,7 @@ Terraform will perform the following actions:
   + resource "aws_cloudwatch_metric_alarm" "service_cpu_low" {
       + actions_enabled                       = true
       + alarm_actions                         = (known after apply)
-      + alarm_name                            = "grafana_cpu_utilization_low"
+      + alarm_name                            = "grafana-cpu-utilization-low"
       + arn                                   = (known after apply)
       + comparison_operator                   = "LessThanOrEqualToThreshold"
       + dimensions                            = {
@@ -274,6 +276,7 @@ Terraform will perform the following actions:
         ]
       + endpoint                              = (known after apply)
       + engine                                = "postgres"
+      + engine_lifecycle_support              = (known after apply)
       + engine_version                        = "16.3"
       + engine_version_actual                 = (known after apply)
       + hosted_zone_id                        = (known after apply)
@@ -429,24 +432,55 @@ Terraform will perform the following actions:
       + container_definitions    = jsonencode(
             [
               + {
-                  + cpu              = 1024
-                  + image            = "bradfordhamilton/crystal_blockchain:latest"
-                  + logConfiguration = {
-                      + logDriver = "awslogs"
-                      + options   = {
-                          + awslogs-group         = "/ecs/cb-app"
-                          + awslogs-region        = "us-east-2"
-                          + awslogs-stream-prefix = "ecs"
-                        }
-                    }
-                  + memory           = 2048
-                  + name             = "cb-app"
-                  + portMappings     = [
+                  + Command                = null
+                  + Cpu                    = 256
+                  + CredentialSpecs        = null
+                  + DependsOn              = null
+                  + DisableNetworking      = null
+                  + DnsSearchDomains       = null
+                  + DnsServers             = null
+                  + DockerLabels           = null
+                  + DockerSecurityOptions  = null
+                  + EntryPoint             = null
+                  + Environment            = null
+                  + EnvironmentFiles       = null
+                  + Essential              = true
+                  + ExtraHosts             = null
+                  + FirelensConfiguration  = null
+                  + HealthCheck            = null
+                  + Hostname               = null
+                  + Image                  = ""
+                  + Interactive            = null
+                  + Links                  = null
+                  + LinuxParameters        = null
+                  + LogConfiguration       = null
+                  + Memory                 = 512
+                  + MemoryReservation      = null
+                  + MountPoints            = null
+                  + Name                   = "dockergs"
+                  + PortMappings           = [
                       + {
-                          + containerPort = 3000
-                          + hostPort      = 3000
+                          + AppProtocol        = ""
+                          + ContainerPort      = 80
+                          + ContainerPortRange = null
+                          + HostPort           = 80
+                          + Name               = null
+                          + Protocol           = "tcp"
                         },
                     ]
+                  + Privileged             = null
+                  + PseudoTerminal         = null
+                  + ReadonlyRootFilesystem = null
+                  + RepositoryCredentials  = null
+                  + ResourceRequirements   = null
+                  + Secrets                = null
+                  + StartTimeout           = null
+                  + StopTimeout            = null
+                  + SystemControls         = null
+                  + Ulimits                = null
+                  + User                   = null
+                  + VolumesFrom            = null
+                  + WorkingDirectory       = null
                 },
             ]
         )
@@ -574,7 +608,7 @@ Terraform will perform the following actions:
       + id                    = (known after apply)
       + managed_policy_arns   = (known after apply)
       + max_session_duration  = 3600
-      + name                  = "ECSTaskExecutionRole"
+      + name                  = "grafana-ECSTaskExecutionRole"
       + name_prefix           = (known after apply)
       + path                  = "/"
       + tags_all              = {
@@ -590,7 +624,7 @@ Terraform will perform the following actions:
   + resource "aws_iam_role_policy_attachment" "ecs-task-execution-role-policy-attachment" {
       + id         = (known after apply)
       + policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
-      + role       = "ECSTaskExecutionRole"
+      + role       = "grafana-ECSTaskExecutionRole"
     }
 
   # aws_iam_role_policy_attachment.ecs_auto_scale_role_policy_attachment will be created
@@ -764,7 +798,7 @@ Terraform will perform the following actions:
       + egress                 = [
           + {
               + cidr_blocks      = [
-                  + "0.0.0.0/0",
+                  + "1.2.3.4/32",
                 ]
               + from_port        = 0
               + ipv6_cidr_blocks = []
@@ -808,7 +842,7 @@ Terraform will perform the following actions:
       + egress                 = [
           + {
               + cidr_blocks      = [
-                  + "108.49.158.98/32",
+                  + "1.2.3.4/32",
                 ]
               + from_port        = 5432
               + ipv6_cidr_blocks = []
@@ -824,7 +858,7 @@ Terraform will perform the following actions:
       + ingress                = [
           + {
               + cidr_blocks      = [
-                  + "108.49.158.98/32",
+                  + "1.2.3.4/32",
                 ]
               + from_port        = 5432
               + ipv6_cidr_blocks = []
@@ -1017,7 +1051,7 @@ Changes to Outputs:
   + rds_port     = (sensitive value)
   + rds_username = (sensitive value)
 
-───────────────────────────────────────────────────────────────────────────────
+──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
 
-Note: You didn't use the -out option to save this plan, so Terraform can't
-guarantee to take exactly these actions if you run "terraform apply" now.
+Note: You didn't use the -out option to save this plan, so Terraform can't guarantee to take exactly these actions if you run "terraform
+apply" now.

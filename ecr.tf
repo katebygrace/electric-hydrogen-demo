@@ -1,5 +1,5 @@
 resource "aws_ecr_repository" "grafana_ecr_repo" {
-  name = "grafana-repo"
+  name                 = "${var.name_prefix}-repo"
   image_tag_mutability = "IMMUTABLE"
 
   image_scanning_configuration {

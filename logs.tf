@@ -5,11 +5,11 @@ resource "aws_cloudwatch_log_group" "grafana_log_group" {
 }
 
 resource "aws_cloudwatch_log_stream" "grafana_log_stream" {
-  name           = "grafana-log-stream"
+  name           = "${var.name_prefix}-log-stream"
   log_group_name = aws_cloudwatch_log_group.grafana_log_group.name
 }
 
 #log bucket
 resource "aws_s3_bucket" "lb_logs" {
-  bucket = "grafana-load-balancer-logs-17" #random enough it wont be taken
+  bucket = "${var.name_prefix}-load-balancer-logs-17" #random enough it wont be taken
 }

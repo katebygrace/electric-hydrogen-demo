@@ -1,20 +1,19 @@
 resource "aws_alb" "grafana-alb" {
-  name            = "grafana-load-balancer"
+  name            = "${var.name_prefix}-load-balancer"
   subnets         = aws_subnet.grafana-public.*.id
   security_groups = [aws_security_group.lb.id]
 
   access_logs {
     bucket  = aws_s3_bucket.lb_logs.id
-    prefix  = "grafana-lb"
+    prefix  = "${var.name_prefix}-lb"
     enabled = true
   }
-
 }
 
 #per instructions, running over port 80/http, but would forward
 #to port 443 over https if production
 resource "aws_alb_target_group" "app" {
-  name        = "grafana-target-group"
+  name        = "${var.name_prefix}-target-group"
   port        = 80
   protocol    = "HTTP"
   vpc_id      = aws_vpc.grafana.id
@@ -40,6 +39,27 @@ resource "aws_alb_listener" "front_end" {
   default_action {
     target_group_arn = aws_alb_target_group.app.id
     type             = "forward"
+  }
+}
+
+# ALB security Group: Edit to restrict access to the application
+resource "aws_security_group" "lb" {
+  name        = "${var.name_prefix}-load-balancer-security-group"
+  description = "controls access to the ALB"
+  vpc_id      = aws_vpc.grafana.id
+
+  ingress {
+    protocol    = "tcp"
+    from_port   = var.app_port
+    to_port     = var.app_port
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  egress {
+    protocol    = "-1"
+    from_port   = 0
+    to_port     = 0
+    cidr_blocks = ["0.0.0.0/0"]
   }
 }
 
