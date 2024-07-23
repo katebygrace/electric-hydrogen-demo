@@ -1,7 +1,7 @@
 Reflect on overall security for the grafana setup, and how to keep it secure. 
 
 For example, how should we securely connect to data sources? 
-- Data sources should be behind a VPN, in a private subnet. Some careful thought should be placed on network architecture and implementation, but databases not be accessible from the public internet.  
+- Some careful thought should be placed on network architecture and implementation. Database access should only be made available to the necessary parties, typically by using a VPN. The database should not be exposed to the public internet. 
 - Data sources should be encryted at rest (compute volumes encryted, as well as databases). 
 - Connections to databases should be encrypted (encryption in transit).  
 
@@ -10,7 +10,7 @@ How should we handle authentication and authorization?
 - Authorization: access should be limited to those who need to be able to access those dashboards. Ideally there'd already be groups in place within SSO/AD we could utilize for RBAC. 
 
 What are some ways we might approach multi-tenancy if multiple organizations need to use this grafana setup, and what would be the pros and cons of each from a security and maintenance perspective? 
-- A lot of the answer is "it depends on the use case", but ideally  I would utilize Grafana's built in multitenancy function https://grafana.com/docs/loki/latest/operations/multi-tenancy/
+- A lot of the answer is "it depends on the use case", but ideally I would utilize Grafana's built in multitenancy function https://grafana.com/docs/loki/latest/operations/multi-tenancy/
 - If that was not possible, I'd hope to utilize RBAC on the existing Grafana instance to scale out to display different items to different organizations, 
 - However, if it was necessary to have different Grafana instances, one for each organization, I would convert most of the existing terraform into a module that could easily be re-used.  
 
@@ -19,6 +19,7 @@ So many things!
 - I'd want to do a more thorough review of logging to make sure logs are occurring at every layer of the stack, ideally pipe that into a SIEM of some kind for further analysis. 
 - I'd want to make sure upgrades of all kinds are maintained: database upgrades, up to date base docker images, updates to the application, etc.
 - I'd want to make sure backups for the database are on an adequate cadence - I believe RDS takes snapshots every 24 hours, I might want to increase that frequency. 
+- I would want to ensure some security monitoring is in place - Starting with CICD to review the code that deploys Grafana (I'm partial to semgrep, but plenty of acceptable options out there), then I'd start by setting up some vulnerability scans, and possibly run an agent (heh, maybe not Crowdstrike) that actively scans for intrusions. 
 - If the terraform was going to be updated regularly, I might put some Github actions checks in to ensure security. 
 
 
